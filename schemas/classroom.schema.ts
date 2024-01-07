@@ -1,4 +1,4 @@
-import mongoose, {Schema, model} from 'mongoose';
+import mongoose, {Schema, model,ObjectId} from 'mongoose';
 
 interface Student {
     firstname: string,
@@ -16,7 +16,8 @@ interface Assignment {
     name: string,
     detail: string,
     checks: Check[],
-    assign_date: Date
+    assign_date: Date,
+    _id: string
 }
 
 interface Attendance {
@@ -49,6 +50,7 @@ const checkSchema = new Schema<Check>({
 const assigmentSchema = new Schema<Assignment>({
     name: String,
     detail: String,
+    _id: Schema.ObjectId,
     checks: [checkSchema]
 })
  

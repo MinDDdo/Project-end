@@ -1,89 +1,89 @@
-import { Response, Request } from 'express';
-import classroomModel from '../schemas/classroom.schema';
-import { response } from '../common/response';
-import { handleError } from '../helpers/handleError';
+// import { Response, Request } from 'express';
+// import classroomModel from '../schemas/classroom.schema';
+// import { response } from '../common/response';
+// import { handleError } from '../helpers/handleError';
 
-export const createClassroom = async(req:Request, res:Response) => {
+// export const createClassroom = async(req:Request, res:Response) => {
     
-    try {
-        const { classroom_name, owner_id ,code } = req.body;
-        await classroomModel.create({
-            classroom_name: classroom_name,
-            owner: owner_id,
-            code: code
-        });
+//     try {
+//         const { classroom_name, owner_id ,code } = req.body;
+//         await classroomModel.create({
+//             classroom_name: classroom_name,
+//             owner: owner_id,
+//             code: code
+//         });
 
-        response(res,200, "success", "Create Classroom",null);
-    }catch (error) {
-        console.log(error);
+//         response(res,200, "success", "Create Classroom",null);
+//     }catch (error) {
+//         console.log(error);
 
-        handleError(res, error)
-    }
-}
+//         handleError(res, error)
+//     }
+// }
 
-export const getAllClassroom = async (req:Request, res:Response) => {
+// export const getAllClassroom = async (req:Request, res:Response) => {
     
-    try {
-        const size = req.query.size;
-        const page = req.query.page;
-        const teacherId = req.params.teacher_id;
+//     try {
+//         const size = req.query.size;
+//         const page = req.query.page;
+//         const teacherId = req.params.teacher_id;
 
-        const classroom = await classroomModel.find({ owner: teacherId})
+//         const classroom = await classroomModel.find({ owner: teacherId})
 
-        response(res,200, "success", "Doo Classrom Ja",classroom);
-    }catch (error) {
-        console.log(error)
+//         response(res,200, "success", "Doo Classrom Ja",classroom);
+//     }catch (error) {
+//         console.log(error)
 
-        handleError(res, error);
-    }
-}
+//         handleError(res, error);
+//     }
+// }
 
-export const getClassroomById = async (req:Request, res:Response) => {
+// export const getClassroomById = async (req:Request, res:Response) => {
 
-    try {
-        const classroomId = req.params.classroom_id;
+//     try {
+//         const classroomId = req.params.classroom_id;
 
-        const classroom = await classroomModel.findById({_id: classroomId})
+//         const classroom = await classroomModel.findById({_id: classroomId})
 
-        if ( classroom === null ) {
-            return response(res,404, "not found", "Not Found Classroom",null);
-        }
-        response(res,200, "success", "Find Classroom",classroom);
+//         if ( classroom === null ) {
+//             return response(res,404, "not found", "Not Found Classroom",null);
+//         }
+//         response(res,200, "success", "Find Classroom",classroom);
         
-    }catch (error) {
-        console.log(error)
+//     }catch (error) {
+//         console.log(error)
 
-        handleError(res, error);
-    }
-}
+//         handleError(res, error);
+//     }
+// }
 
-export const updateClassroomById = async (req:Request, res:Response) => {
+// export const updateClassroomById = async (req:Request, res:Response) => {
 
-    try {
-        const classroomId = req.params.classroom_id;
+//     try {
+//         const classroomId = req.params.classroom_id;
     
-        const { classroom_name } = req.body;
+//         const { classroom_name } = req.body;
 
-        await classroomModel.updateOne({ _id: classroomId } ,{
-            classroom_name: classroom_name
-        });
-        response(res,200, "success", "Update New Classroom Dode",null);
+//         await classroomModel.updateOne({ _id: classroomId } ,{
+//             classroom_name: classroom_name
+//         });
+//         response(res,200, "success", "Update New Classroom Dode",null);
 
-    }catch (error) {
-        console.log(error)
-        handleError(res, error);
-    }
-}
+//     }catch (error) {
+//         console.log(error)
+//         handleError(res, error);
+//     }
+// }
 
-export const deleteClassroomById =async (req:Request, res:Response) => {
+// export const deleteClassroomById =async (req:Request, res:Response) => {
     
-    try {
-        const classroomId = req.params.classroom_id;
+//     try {
+//         const classroomId = req.params.classroom_id;
 
-        await classroomModel.deleteOne({ _id: classroomId})
-        response(res,200, "success", "Delete Classroom",null);
-    }catch (error) {
-        console.log(error);
-        handleError(res, error);
-    }
-}
+//         await classroomModel.deleteOne({ _id: classroomId})
+//         response(res,200, "success", "Delete Classroom",null);
+//     }catch (error) {
+//         console.log(error);
+//         handleError(res, error);
+//     }
+// }

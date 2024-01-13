@@ -7,4 +7,3 @@ router.post('/signup', createUser);
 router.put('/update/:user_id', updateUser)
 
 export default router;
-

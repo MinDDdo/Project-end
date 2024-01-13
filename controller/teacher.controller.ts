@@ -23,8 +23,37 @@ export const createUser = async(req:Request, res:Response) => {
         handleError(res, error);
     }
 }
-export const updateUser = async(req:Request, res:Response) => {
 
+export const login = async (req: Request, res: Response) => {
+    try {
+        const { email, password } = req.body;
+
+        const teacher = await teacherModel.findOne({ email: email, password: password });
+
+        if (!teacher) {
+            return response(res, 404, "fail", "Invalid email or password", null);
+        }
+
+        await teacherModel.updateOne({ _id: teacher._id }, {
+            refresh_token: ''
+        });
+
+        const token = {
+            teacher_id: teacher._id,
+            teacher_firstname: teacher.firstname,
+            teacher_lastname: teacher.lastname,
+            token: '',
+            refresh_token: ''
+        }
+
+        response(res, 200, 'success', "Login success", null);
+    } catch (error) {
+
+    }
+}
+
+
+export const updateUser = async(req:Request, res:Response) => {
     try {
         const id = req.params.user_id;
 

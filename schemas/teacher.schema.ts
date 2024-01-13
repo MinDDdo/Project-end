@@ -9,6 +9,7 @@ interface Teacher {
     password: string;
     line_contact: string;
     phone_contact: string;
+    refresh_token: string;
 }
 
 const teacherSchema = new Schema <Teacher>({
@@ -41,8 +42,10 @@ const teacherSchema = new Schema <Teacher>({
     },
     phone_contact: {
         type: String
+    },
+    refresh_token: {
+        type: String
     }
-
 })
 
 const teacherModel = model('teacher', teacherSchema);

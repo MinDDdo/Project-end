@@ -1,44 +1,47 @@
-// import { Response, Request } from "express";
-// import classroomModel from "../schemas/classroom.schema";
-// import { response } from "../common/response";
-// import { handleError } from "../helpers/handleError";
+import { Response, Request } from "express";
+import classroomModel from "../schemas/classroom.schema";
+import { response } from "../common/response";
+import { handleError } from "../helpers/handleError";
+import studentModel from "../schemas/student.schema";
+import assignmentModel from "../schemas/assignment.schema";
 
 
-// export const createAssignment =async (req: Request, res: Response) => {
+export const createAssignment =async (req: Request, res: Response) => {
     
-//     try {
-//         const classroomId = req.params.classroom_id;
+    try {
+        const { classroom_id } = req.params;
 
-//         const  { assignment_name, assignment_detail } = req.body;
+        const  { assign_name, assign_detail, assign_due } = req.body;
 
-//         const classroom = await classroomModel.findById({_id:classroomId});
+        const student = await studentModel.find({classroom_id:classroom_id});
 
-//         if (!classroom ) {
-//             return response(res,404, "fail", "Not found assignment",null);
-//         }
+        const studentMap = student.map((item) => {
+            const studentObj = {
+                no: item.no,
+                firstname: item.firstname,
+                lastname: item.lastname,
+                handin: false
+            }
+            return studentObj
+        })
+        console.log(studentMap)
+        
+        await assignmentModel.create({ 
+            classroom_id: classroom_id,
+            assign_create: new Date(),
+            assign_due: assign_due,
+            assign_name: assign_name,
+            assign_detail: assign_detail,
+            student: studentMap
+        })
 
-//         const assigmentObj = {
-//             name: assignment_name,
-//             detail: assignment_detail
-//         }
+       response(res,200, "success", "Create Assignment done", null);
 
-//        if (classroom?.assigment) {
-
-//         await classroomModel.updateOne({ _id: classroomId}, {
-//             assigment: [...classroom?.assigment,assigmentObj]
-//         });
-//        } else {
-//             await classroomModel.updateOne({ _id: classroomId},{
-//                 assigment: [assigmentObj]
-//             });
-//        }
-//        response(res,200, "success", "Create Assignment done", null);
-
-//     }catch (error) {
-//         console.log(error)
-//         handleError(res,error);
-//     }
-// }
+    }catch (error) {
+        console.log(error)
+        handleError(res,error);
+    }
+}
 
 // export const getAllAssignment =async (req: Request, res: Response) => {
     

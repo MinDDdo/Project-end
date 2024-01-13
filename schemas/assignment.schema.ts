@@ -5,18 +5,30 @@ interface Assignment {
     student: StudentItem[];
     assign_create: Date;
     assign_due: Date;
+    assign_name: string;
+    assign_detail: string;
 }
 
 interface StudentItem {
     no: number;
+    firstname: string;
+    lastname: string;
     handin: boolean;
 }
 
 const studentItemSchema = new Schema<StudentItem>({
     no: { 
         type: Number, 
-        required: true,
-        unique: true
+        required: true
+        
+    },
+    firstname: {
+        type: String,
+        required: true
+    },
+    lastname: {
+        type: String,
+        required: true
     },
     handin: {
         type: Boolean,
@@ -35,6 +47,14 @@ const assignmentSchema = new Schema<Assignment>({
     },
     assign_due: {
         type: Date,
+        required: true
+    },
+    assign_name: {
+        type: String,
+        required: true
+    },
+    assign_detail: {
+        type: String,
         required: true
     },
     student: {

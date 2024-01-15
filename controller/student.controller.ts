@@ -6,12 +6,23 @@ import  studentModel  from "../schemas/student.schema";
 
 export const createStudentClassroom = async (req: Request, res: Response) => {
     try {
-        const classroomId = req.params.classroom_id;
+        const { classroom_id } = req.params;
         
         const { firstname, lastname, no } = req.body;
 
+        const studentAll = await studentModel.find({ classroom_id: classroom_id})
+
+        const studentFind = studentAll.find((item) => {
+            if (item.no === no) {
+                return item
+            }
+        })
+        if (studentFind) {
+            return response(res,422, "fail", "NO is duplicate",null);
+        }
+
         await studentModel.create({
-            classroom_id: classroomId,
+            classroom_id: classroom_id,
             no: no,
             firstname: firstname,
             lastname: lastname

@@ -7,6 +7,7 @@ import classroomRoute from './routes/classroom.router';
 import authenRoute from './routes/authen.router';
 import studentRoute from './routes/student.router';
 import assignmentRoute from './routes/assignment.router';
+import attendanceRoute from './routes/attendance.router';
 
 
 
@@ -19,6 +20,7 @@ app.use('/v1/classroom', classroomRoute);
 app.use('/v1/auth', authenRoute);
 app.use('/v1/student', studentRoute);
 app.use('/v1/assignment', assignmentRoute);
+app.use('/v1/attendance', attendanceRoute);
 
 
 connectMongoDB().then();

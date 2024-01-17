@@ -14,8 +14,8 @@ interface StudentItem {
 const studentItemSchema = new Schema<StudentItem>({
     no: { 
         type: Number, 
-        required: true,
-        unique: true
+        required: true
+        
     },
     present: {
         type: Boolean,

@@ -8,6 +8,8 @@ interface Attendance {
 
 interface StudentItem {
     no: number;
+    firstname: string;
+    lastname: string;
     present: boolean;
 }
 
@@ -16,6 +18,14 @@ const studentItemSchema = new Schema<StudentItem>({
         type: Number, 
         required: true
         
+    },
+    firstname: {
+        type: String,
+        required: true
+    },
+    lastname: {
+        type: String,
+        required: true
     },
     present: {
         type: Boolean,

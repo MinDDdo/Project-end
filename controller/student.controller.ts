@@ -2,6 +2,8 @@ import { Response, Request } from "express";
 import { response } from "../common/response";
 import { handleError } from "../helpers/handleError";
 import  studentModel  from "../schemas/student.schema";
+import assignmentModel from "../schemas/assignment.schema";
+import attendanceModel from "../schemas/attendance.schema";
 
 
 export const createStudentClassroom = async (req: Request, res: Response) => {
@@ -16,7 +18,8 @@ export const createStudentClassroom = async (req: Request, res: Response) => {
             if (item.no === no) {
                 return item
             }
-        })
+        });
+
         if (studentFind) {
             return response(res,422, "fail", "NO is duplicate",null);
         }
@@ -26,7 +29,31 @@ export const createStudentClassroom = async (req: Request, res: Response) => {
             no: no,
             firstname: firstname,
             lastname: lastname
-        })
+        });
+
+        const newStudent = {
+            no: no,
+            firstname: firstname,
+            lastname: lastname,
+            handin: false
+        }
+        await assignmentModel.updateMany({ classroom_id: classroom_id }, {
+            $push: {
+                student: newStudent
+            }
+        });
+
+        const newAttendance = {
+           no: no,
+           firstname: firstname,
+           lastname: lastname,
+           present: false
+        }
+        await attendanceModel.updateMany({ classroom_id: classroom_id }, {
+            $push: {
+                student: newAttendance
+            }
+        });
 
         response(res,200, "success", "Create Student done.",null);
     } catch (error){
@@ -40,12 +67,39 @@ export const updateStudentClassroom = async (req:Request, res:Response) => {
         const { student_id } = req.params;
         const { firstname, lastname } = req.body;
 
-        const student = await studentModel.updateOne({ _id: student_id }, {
+        await studentModel.updateOne({ _id: student_id }, {
             firstname: firstname,
             lastname: lastname
         })
-        console.log(student)
 
+        const student = await studentModel.findById({ _id: student_id })
+
+        if (!student) {
+            return response(res,404, "fail", "Not Found", null);
+        }
+
+        await assignmentModel.updateMany({ classroom_id: student.classroom_id , 'student.no': student.no }, 
+            {
+                $set: {
+                    'student.$[x].firstname': firstname,
+                    'student.$[x].lastname': lastname
+                }
+            },
+            {
+                arrayFilters: [{ 'x.no': student.no }]
+            }
+        );
+        await attendanceModel.updateMany({ classroom_id: student.classroom_id , 'student.no': student.no }, 
+            {
+                $set: {
+                    'student.$[x].firstname': firstname,
+                    'student.$[x].lastname': lastname
+                }
+            },
+            {
+                arrayFilters: [{ 'x.no': student.no }]
+            }
+        );
         response(res,200, "success", "Update Student done.",null);
     }catch (error) {
         console.log(error)
@@ -59,8 +113,18 @@ export const getAllStudentClassroom = async (req:Request, res:Response) => {
         const { classroom_id } = req.params;
 
         const student = await studentModel.find({ classroom_id: classroom_id })
-        
-        response(res,200, "success", "Find Student Classroom",student);
+
+        const studentMap = student.map((item) => {
+            const studentObj = {
+                id: item.id,
+                classroom_id: item.classroom_id,
+                no: item.no,
+                firstname: item.firstname,
+                lastname: item.lastname 
+            }
+            return studentObj;
+        }) 
+        response(res,200, "success", "Find Student Classroom",studentMap);
 
     }catch (error) {
         console.log (error)
@@ -90,9 +154,29 @@ export const getStudentClassroomById = async (req:Request, res:Response) => {
 export const deleteStudentClassroomById = async (req:Request, res:Response) => {
     try {
         const { student_id } = req.params;
+        
+        const student = await studentModel.findById({ _id: student_id })
+
+        if (!student) {
+            return response(res,404, "fail", "Not found", null)
+        }
 
         await studentModel.deleteOne({ _id: student_id })
 
+        await assignmentModel.updateMany({ classroom_id: student.classroom_id }, 
+            {
+                $pull: {
+                    student: { no: student.no }
+                }
+            }
+        )
+        await attendanceModel.updateMany({ classroom_id: student.classroom_id }, 
+            {
+                $pull: {
+                    student: { no: student.no }
+                }
+            }
+        )
         response(res,200, "success", "Delete Student", null);
     }catch (error) {
         console.log(error)

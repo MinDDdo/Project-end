@@ -1,8 +1,9 @@
 import { Response, Request } from "express";
 import { response } from "../common/response";
 import { handleError } from "../helpers/handleError";
-import attendance from "../schemas/attendance.schema";
 import attendanceModel from "../schemas/attendance.schema";
+import excelJS from 'exceljs';
+import dayjs from 'dayjs';
 
 export const createStudentAttendance = async (req:Request, res:Response) => {
     try {
@@ -93,5 +94,68 @@ export const getStudentAttendanceById = async (req:Request, res:Response) => {
     }catch (error) {
         console.log(error);
         handleError(res,error);
+    }
+}
+
+export const exportAttendanceExcel = async (req: Request, res: Response) => {
+    try {
+        const { classroom_id } = req.body;
+        const { start_date, end_date } = req.query;
+
+        const attendanceData = await attendanceModel.find(
+            { 
+                classroom_id: classroom_id,  
+                attendance_date: {
+                    $gte: start_date,
+                    $lte: end_date
+                }
+            }
+        );
+
+        const workbook = new excelJS.Workbook();
+
+        attendanceData.forEach((attendance) => {
+            const dateFormat = dayjs(attendance.attendance_date).format('YYYY-MM-DD');
+
+            const worksheet = workbook.addWorksheet(dateFormat);
+
+            worksheet.columns = [
+                { header: 'no', key: 'no', width: 10 },
+                { header: 'firstname', key: 'fname', width: 30 },
+                { header: 'latstname', key: 'lname', width: 30 },
+                { header: 'date', key: 'date', width: 10 },
+                { header: 'present', key: 'present', width: 10 }
+            ]
+    
+            worksheet.getRow(1).eachCell((cell) => {
+                cell.font = { bold: true };
+                cell.border = {
+                    top: { style: 'thin' },
+                    left: { style: 'thin' },
+                    bottom: { style: 'thin' },
+                    right: { style: 'thin' },
+                };
+            });
+
+            attendance.student.forEach((student) => {    
+                worksheet.addRow({
+                    no: student.no,
+                    date: dateFormat,
+                    fname: student.firstname,
+                    lname: student.lastname,
+                    present: student.present
+                })
+            })
+        })
+
+        const buffer = await workbook.xlsx.writeBuffer();
+
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename=report.xlsx');
+
+        // await workbook.xlsx.write(res);
+        res.end(buffer);
+    } catch (error) {
+        handleError(res, error);
     }
 }

@@ -2,19 +2,23 @@ import {Response, Request} from 'express';
 import teacherModel from '../schemas/teacher.schema';
 import { response } from '../common/response';
 import { handleError } from '../helpers/handleError';
-
+import bcrypt from 'bcrypt';
 
 export const createUser = async(req:Request, res:Response) => {
-
     try {
         const { firstname, lastname, dob, gender, email, password } = req.body;
+
+        // ENCRYPT PASSWORD
+        const salt = await bcrypt.genSalt();
+        const encryptPassword = await bcrypt.hash(password, salt);
+        
         await teacherModel.create({
             firstname: firstname,
             lastname: lastname,
             dob: dob,
             gender: gender,
             email: email,
-            password: password 
+            password: encryptPassword 
         });
 
         response(res,200, "success", "Singup new user done",null);

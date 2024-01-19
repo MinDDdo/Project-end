@@ -5,6 +5,7 @@ import { handleError } from '../helpers/handleError';
 import { createToken } from '../helpers/handleJWT';
 import jwt from 'jsonwebtoken';
 import config from '../common/config';
+import bcrypt from 'bcrypt';
 
 const ACCESS_TOKEN_EXPIRED = '1hr';
 const REFRESH_TOKEN_EXPIRED = '7D';
@@ -14,10 +15,16 @@ export const login = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
 
-        const teacher = await teacherModel.findOne({ email: email, password: password });
-
+        const teacher = await teacherModel.findOne({ email: email });
         if (!teacher) {
-            return response(res, 404, "fail", "Invalid email or password", null);
+            return response(res, 404, "fail", "Not founded email or password", null);
+        }
+        
+        // COMPARE PASSWORD WITH BCRYPT
+        const auth = await bcrypt.compare(password, teacher?.password);
+
+        if (!auth) {
+            return response(res, 401, "fail", "Invalid email or password", null);
         }
 
         const access_token = createToken({ id: teacher._id }, ACCESS_TOKEN_EXPIRED);

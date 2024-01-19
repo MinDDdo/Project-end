@@ -2,15 +2,21 @@ import { Response, Request } from 'express';
 import classroomModel from '../schemas/classroom.schema';
 import { response } from '../common/response';
 import { handleError } from '../helpers/handleError';
+import { v4 as uuidv4 } from 'uuid';
 
 export const createClassroom = async(req:Request, res:Response) => {
     
     try {
-        const { name, owner ,code } = req.body;
+        const { name, owner } = req.body;
+
+        // Generate classroom code
+        const uuid = uuidv4();
+        const classroomCode = uuid.substring(0, 6);
+
         await classroomModel.create({
             name: name,
             owner: owner,
-            code: code
+            code: classroomCode
         });
 
         response(res,200, "success", "Create Classroom",null);

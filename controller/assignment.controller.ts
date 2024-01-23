@@ -4,6 +4,7 @@ import { response } from "../common/response";
 import { handleError } from "../helpers/handleError";
 import studentModel from "../schemas/student.schema";
 import assignmentModel from "../schemas/assignment.schema";
+import { log } from "console";
 
 
 export const createAssignment = async (req: Request, res: Response) => {
@@ -148,6 +149,38 @@ export const checkAssignment = async (req: Request, res: Response) => {
         console.log(error);
         handleError(res, error);
 
+    }
+}
+
+export const studentCheckStatusAssignment = async (req:Request, res:Response) => {
+    try {
+        const { no , classroom_id } = req.body;
+        
+        const assigment = await assignmentModel.aggregate([
+            { $unwind: "$student" },
+            {
+                $match: { classroom_id: classroom_id, "student.no": no },
+            },
+
+            {
+              $project: {
+                _id: 0,
+                assign_id: "$_id",
+                classroom_id: 1,
+                assign_name: 1,
+                assign_detail: 1,
+                handin_detail: "$student"
+                
+                
+              }
+            }
+          ])
+        console.log(assigment)
+        response(res,200, "success", "Check done", assigment)
+
+    }catch (error) {
+        console.log(error);
+        handleError(res,error);
     }
 }
 

@@ -6,7 +6,7 @@ import assignmentModel from "../schemas/assignment.schema";
 import attendanceModel from "../schemas/attendance.schema";
 
 
-export const createStudentClassroom = async (req: Request, res: Response) => {
+export const createStudent = async (req: Request, res: Response) => {
     try {
         const { classroom_id } = req.params;
         
@@ -62,7 +62,7 @@ export const createStudentClassroom = async (req: Request, res: Response) => {
     }
 }
 
-export const updateStudentClassroom = async (req:Request, res:Response) => {
+export const updateStudent= async (req:Request, res:Response) => {
     try{
         const { student_id } = req.params;
         const { firstname, lastname } = req.body;
@@ -107,24 +107,28 @@ export const updateStudentClassroom = async (req:Request, res:Response) => {
     }
 }
 
-export const getAllStudentClassroom = async (req:Request, res:Response) => {
+export const getAllStudent = async (req:Request, res:Response) => {
 
     try {
         const { classroom_id } = req.params;
 
-        const student = await studentModel.find({ classroom_id: classroom_id })
-
-        const studentMap = student.map((item) => {
-            const studentObj = {
-                id: item.id,
-                classroom_id: item.classroom_id,
-                no: item.no,
-                firstname: item.firstname,
-                lastname: item.lastname 
+        const student = await studentModel.aggregate([
+            {
+                $match: { classroom_id: classroom_id }
+            },
+            {
+                $project: {
+                    id: "$_id",
+                    classroom_id: 1,
+                    no: 1,
+                    firstname: 1,
+                    lastname: 1,
+                    _id: 0
+                }
             }
-            return studentObj;
-        }) 
-        response(res,200, "success", "Find Student Classroom",studentMap);
+        ])
+
+        response(res,200, "success", "Find Student Classroom",student);
 
     }catch (error) {
         console.log (error)
@@ -132,7 +136,7 @@ export const getAllStudentClassroom = async (req:Request, res:Response) => {
     }
 }
 
-export const getStudentClassroomById = async (req:Request, res:Response) => {
+export const getStudentById = async (req:Request, res:Response) => {
     
     try {
         const { student_id } = req.params;
@@ -142,8 +146,15 @@ export const getStudentClassroomById = async (req:Request, res:Response) => {
         if (!student) {
             return response(res,404, "fail", "Not found",null);
         }
+        const studentObj = {
+            id: student._id,
+            classroom_id: student.classroom_id,
+            no: student.no,
+            firstname: student.firstname,
+            lastname: student.lastname
+        }
         
-        response(res,200, "success", "Find Student",student);
+        response(res,200, "success", "Find Student",studentObj);
         
     }catch (error) {
         console.log(error)
@@ -151,7 +162,7 @@ export const getStudentClassroomById = async (req:Request, res:Response) => {
     }
 }
 
-export const deleteStudentClassroomById = async (req:Request, res:Response) => {
+export const deleteStudentById = async (req:Request, res:Response) => {
     try {
         const { student_id } = req.params;
         

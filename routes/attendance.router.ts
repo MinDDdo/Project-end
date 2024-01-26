@@ -1,15 +1,17 @@
 import { Router } from "express";
-import { createStudentAttendance, updateStudentAttendance, 
-        deleteStudentAttendance, getAllStudentAttendance, getStudentAttendanceById, exportAttendanceExcel } from "../controller/attendance.controller";
+import validToken from '../middlewares/authenJWT';
+import { createAttendance, updateAttendance, 
+        deleteAttendance, getAllAttendance, 
+        getAttendanceById, exportAttendanceExcel } from "../controller/attendance.controller";
 
 const router = Router();
 
-router.post('/create-attendance', createStudentAttendance);
-router.put('/:attendance_id/update-attendance', updateStudentAttendance);
-router.delete('/:attendance_id/delete-attendance', deleteStudentAttendance);
-router.get('/:classroom_id/getAll-attendance', getAllStudentAttendance);
-router.get('/:attendance_id/getById-attendance', getStudentAttendanceById);
+router.post('/create-attendance',validToken, createAttendance);
+router.put('/:attendance_id/update-attendance',validToken, updateAttendance);
+router.delete('/:attendance_id/delete-attendance',validToken, deleteAttendance);
+router.get('/:classroom_id/getAll-attendance',validToken, getAllAttendance);
+router.get('/:attendance_id/getById-attendance',validToken, getAttendanceById);
 
-router.get('/export-attendance-excel', exportAttendanceExcel);
+router.get('/export-attendance-excel',validToken, exportAttendanceExcel);
 
 export default router;

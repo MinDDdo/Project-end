@@ -32,9 +32,22 @@ export const getAllClassroom = async (req:Request, res:Response) => {
     try {
         const size = req.query.size;
         const page = req.query.page;
-        const teacherId = req.params.teacher_id;
+        const { teacher_id } = req.params;
 
-        const classroom = await classroomModel.find({ owner: teacherId})
+        const classroom = await classroomModel.aggregate([
+            {
+                $match: { owner: teacher_id }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    id: "$_id",
+                    name: 1,
+                    code: 1,
+                    owner: 1
+                }
+            }
+        ])
 
         response(res,200, "success", "Doo Classrom Ja",classroom);
     }catch (error) {
@@ -54,7 +67,13 @@ export const getClassroomById = async (req:Request, res:Response) => {
         if ( classroom === null ) {
             return response(res,404, "not found", "Not Found Classroom",null);
         }
-        response(res,200, "success", "Find Classroom",classroom);
+        const classroomObj = {
+            id: classroom._id,
+            name: classroom.name,
+            code: classroom.code,
+            owner: classroom.owner
+        }
+        response(res,200, "success", "Find Classroom",classroomObj);
         
     }catch (error) {
         console.log(error)

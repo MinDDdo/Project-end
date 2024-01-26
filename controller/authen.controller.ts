@@ -7,8 +7,10 @@ import jwt from 'jsonwebtoken';
 import config from '../common/config';
 import bcrypt from 'bcrypt';
 
+// const ACCESS_TOKEN_EXPIRED = '1hr';
+// const REFRESH_TOKEN_EXPIRED = '90m';
 const ACCESS_TOKEN_EXPIRED = '1hr';
-const REFRESH_TOKEN_EXPIRED = '7D';
+const REFRESH_TOKEN_EXPIRED = '90m';
 
 
 export const login = async (req: Request, res: Response) => {

@@ -29,8 +29,6 @@ export const createUser = async(req:Request, res:Response) => {
     }
 }
 
-
-
 export const updateUser = async(req:Request, res:Response) => {
     try {
         const id = req.params.user_id;

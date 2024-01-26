@@ -5,7 +5,7 @@ import attendanceModel from "../schemas/attendance.schema";
 import excelJS from 'exceljs';
 import dayjs from 'dayjs';
 
-export const createStudentAttendance = async (req:Request, res:Response) => {
+export const createAttendance = async (req:Request, res:Response) => {
     try {
 
         const { attendance_date, student, classroom_id } = req.body;
@@ -22,13 +22,13 @@ export const createStudentAttendance = async (req:Request, res:Response) => {
     }
 }
 
-export const updateStudentAttendance = async (req:Request, res:Response) => {
+export const updateAttendance = async (req:Request, res:Response) => {
     try {
         const { attendance_id } = req.params;
 
         const { student } = req.body;
 
-        await attendanceModel.updateOne({ 
+        await attendanceModel.updateOne({ _id: attendance_id},{ 
             student: student
         })
         response(res,200, "success", "Update attendance done",null);
@@ -39,7 +39,7 @@ export const updateStudentAttendance = async (req:Request, res:Response) => {
     }
 }
 
-export const deleteStudentAttendance = async (req:Request, res:Response) => {
+export const deleteAttendance = async (req:Request, res:Response) => {
     try {
         const { attendance_id } = req.params;
 
@@ -53,7 +53,7 @@ export const deleteStudentAttendance = async (req:Request, res:Response) => {
     }
 }
 
-export const getAllStudentAttendance = async (req:Request, res:Response) => {
+export const getAllAttendance = async (req:Request, res:Response) => {
     try {
         const { classroom_id } = req.params;
 
@@ -77,7 +77,7 @@ export const getAllStudentAttendance = async (req:Request, res:Response) => {
     }
 }
 
-export const getStudentAttendanceById = async (req:Request, res:Response) => {
+export const getAttendanceById = async (req:Request, res:Response) => {
     try {
         const { attendance_id } = req.params;
 

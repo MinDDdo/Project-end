@@ -170,8 +170,6 @@ export const studentCheckStatusAssignment = async (req:Request, res:Response) =>
                 assign_name: 1,
                 assign_detail: 1,
                 handin_detail: "$student"
-                
-                
               }
             }
           ])

@@ -195,3 +195,42 @@ export const deleteStudentById = async (req:Request, res:Response) => {
     }
 }
 
+export const randomGroup = async (req: Request, res: Response) => {
+    try {
+        const { classroom_id } = req.params;
+        const { group_size } = req.body;
+
+        const students = await studentModel.find({ classroom_id: classroom_id });
+
+        if (students.length === 0) {
+            return response(res, 404, 'fail', "Don't have student", null);
+        }
+
+        for (let i = students.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [students[i], students[j]] = [students[j], students[i]];
+        }
+        
+        const groupSize = group_size; // Set the desired group size
+        
+        const groupResponse: any = [];
+        for (let i = 0; i < students.length; i += groupSize) {
+            const group = students.slice(i, i + groupSize).map(item => {
+                const obj = {
+                    firstname: item.firstname,
+                    lastname: item.lastname,
+                    no: item.no,
+                }
+
+                return obj;
+            });
+
+            groupResponse.push(group);
+        }
+
+        response(res, 200, 'success', 'Group student success', groupResponse);
+          
+    } catch (error) {
+        handleError(res, error);
+    }
+}

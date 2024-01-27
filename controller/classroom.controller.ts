@@ -1,5 +1,8 @@
 import { Response, Request } from 'express';
 import classroomModel from '../schemas/classroom.schema';
+import studentModel from '../schemas/student.schema';
+import assignmentModel from '../schemas/assignment.schema';
+import attendanceModel from '../schemas/attendance.schema';
 import { response } from '../common/response';
 import { handleError } from '../helpers/handleError';
 import { v4 as uuidv4 } from 'uuid';
@@ -101,11 +104,19 @@ export const updateClassroomById = async (req:Request, res:Response) => {
 }
 
 export const deleteClassroomById =async (req:Request, res:Response) => {
-    
     try {
         const classroomId = req.params.classroom_id;
 
-        await classroomModel.deleteOne({ _id: classroomId})
+        const classroom = await classroomModel.deleteOne({ _id: classroomId});
+
+        if (classroom.deletedCount === 0) {
+            return response(res,200, "fail", "Not founded classroom", null);
+        }
+
+        await studentModel.deleteMany({ classroom_id: classroomId });
+        await attendanceModel.deleteMany({ classroom_id: classroomId });
+        await assignmentModel.deleteMany({ classroom_id: classroomId });
+
         response(res,200, "success", "Delete Classroom",null);
     }catch (error) {
         console.log(error);

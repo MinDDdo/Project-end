@@ -19,7 +19,7 @@ export const login = async (req: Request, res: Response) => {
 
         const teacher = await teacherModel.findOne({ email: email });
         if (!teacher) {
-            return response(res, 404, "fail", "Not founded email or password", null);
+            return response(res, 401, "fail", "Invalid email or password", null);
         }
         
         // COMPARE PASSWORD WITH BCRYPT

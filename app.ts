@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import { connectMongoDB } from './database/mongodb';
+import cors from 'cors';
 
 import teacherRoute from './routes/teacher.router'
 import classroomRoute from './routes/classroom.router';
@@ -12,6 +13,10 @@ import attendanceRoute from './routes/attendance.router';
 
 
 const app = express();
+
+app.use(cors({
+    origin: '*'
+}));
 
 app.use(bodyParser.json())
 

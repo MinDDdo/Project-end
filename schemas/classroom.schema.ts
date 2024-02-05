@@ -4,6 +4,8 @@ interface Classroom {
     name: string;
     code: string;
     owner: string;
+    subject_code: string;
+    grade: string;
 }
 
 const classroomSchema = new Schema<Classroom>({
@@ -19,6 +21,12 @@ const classroomSchema = new Schema<Classroom>({
     owner: {
         type: String,
         required: true
+    },
+    subject_code: {
+        type: String
+    },
+    grade: {
+        type: String
     }
 })
 

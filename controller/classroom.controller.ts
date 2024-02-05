@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 export const createClassroom = async(req:Request, res:Response) => {
     
     try {
-        const { name, owner } = req.body;
+        const { name, owner, subject_code, grade } = req.body;
 
         // Generate classroom code
         const uuid = uuidv4();
@@ -19,7 +19,9 @@ export const createClassroom = async(req:Request, res:Response) => {
         await classroomModel.create({
             name: name,
             owner: owner,
-            code: classroomCode
+            code: classroomCode,
+            subject_code: subject_code,
+            grade: grade
         });
 
         response(res,200, "success", "Create Classroom",null);
@@ -47,7 +49,9 @@ export const getAllClassroom = async (req:Request, res:Response) => {
                     id: "$_id",
                     name: 1,
                     code: 1,
-                    owner: 1
+                    owner: 1,
+                    subject_code: 1,
+                    grade: 1
                 }
             }
         ])
@@ -74,7 +78,9 @@ export const getClassroomById = async (req:Request, res:Response) => {
             id: classroom._id,
             name: classroom.name,
             code: classroom.code,
-            owner: classroom.owner
+            owner: classroom.owner,
+            subject_code: classroom.subject_code,
+            grade: classroom.grade
         }
         response(res,200, "success", "Find Classroom",classroomObj);
         
@@ -90,12 +96,14 @@ export const updateClassroomById = async (req:Request, res:Response) => {
     try {
         const classroomId = req.params.classroom_id;
     
-        const { name } = req.body;
+        const { name, subject_code, grade } = req.body;
 
         await classroomModel.updateOne({ _id: classroomId } ,{
-            name: name
+            name: name,
+            subject_code: subject_code,
+            grade: grade
         });
-        response(res,200, "success", "Update New Classroom Dode",null);
+        response(res,200, "success", "Update New Classroom Done",null);
 
     }catch (error) {
         console.log(error)

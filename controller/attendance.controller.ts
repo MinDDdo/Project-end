@@ -124,7 +124,7 @@ export const exportAttendanceExcel = async (req: Request, res: Response) => {
                 { header: 'firstname', key: 'fname', width: 30 },
                 { header: 'latstname', key: 'lname', width: 30 },
                 { header: 'date', key: 'date', width: 10 },
-                { header: 'present', key: 'present', width: 10 }
+                { header: 'status', key: 'status', width: 10 }
             ]
     
             worksheet.getRow(1).eachCell((cell) => {
@@ -143,7 +143,7 @@ export const exportAttendanceExcel = async (req: Request, res: Response) => {
                     date: dateFormat,
                     fname: student.firstname,
                     lname: student.lastname,
-                    present: student.present
+                    status: student.status
                 })
             })
         })

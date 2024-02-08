@@ -10,7 +10,7 @@ interface StudentItem {
     no: number;
     firstname: string;
     lastname: string;
-    present: boolean;
+    status: string;
 }
 
 const studentItemSchema = new Schema<StudentItem>({
@@ -27,8 +27,8 @@ const studentItemSchema = new Schema<StudentItem>({
         type: String,
         required: true
     },
-    present: {
-        type: Boolean,
+    status: {
+        type: String,
         required: true
     }
 }, { _id: false })

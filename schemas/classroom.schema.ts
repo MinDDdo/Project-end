@@ -6,6 +6,7 @@ interface Classroom {
     owner: string;
     subject_code: string;
     grade: string;
+    image: string;
 }
 
 const classroomSchema = new Schema<Classroom>({
@@ -27,7 +28,11 @@ const classroomSchema = new Schema<Classroom>({
     },
     grade: {
         type: String
+    },
+    image: {
+        type: String
     }
+
 })
 
 const classroomModel = model('classroom', classroomSchema);

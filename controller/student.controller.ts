@@ -65,11 +65,12 @@ export const createStudent = async (req: Request, res: Response) => {
 export const updateStudent= async (req:Request, res:Response) => {
     try{
         const { student_id } = req.params;
-        const { firstname, lastname } = req.body;
+        const { firstname, lastname, image } = req.body;
 
         await studentModel.updateOne({ _id: student_id }, {
             firstname: firstname,
-            lastname: lastname
+            lastname: lastname,
+            image: image
         })
 
         const student = await studentModel.findById({ _id: student_id })
@@ -123,7 +124,8 @@ export const getAllStudent = async (req:Request, res:Response) => {
                     no: 1,
                     firstname: 1,
                     lastname: 1,
-                    _id: 0
+                    _id: 0,
+                    image: 1
                 }
             }
         ])
@@ -151,7 +153,8 @@ export const getStudentById = async (req:Request, res:Response) => {
             classroom_id: student.classroom_id,
             no: student.no,
             firstname: student.firstname,
-            lastname: student.lastname
+            lastname: student.lastname,
+            image: student.image
         }
         
         response(res,200, "success", "Find Student",studentObj);

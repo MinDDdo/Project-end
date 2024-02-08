@@ -6,6 +6,7 @@ interface Student {
     firstname: string;
     lastname: string;
     refresh_token: string;
+    image: string;
 }
 
 const studentSchema = new Schema<Student>({
@@ -26,6 +27,9 @@ const studentSchema = new Schema<Student>({
         required: true
     },
     refresh_token: {
+        type: String
+    },
+    image: {
         type: String
     }
 })

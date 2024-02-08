@@ -33,7 +33,7 @@ export const updateUser = async(req:Request, res:Response) => {
     try {
         const id = req.params.user_id;
 
-        const { firstname, lastname, dob, gender, line_contact, phone_contact } = req.body;
+        const { firstname, lastname, dob, gender, line_contact, phone_contact, image } = req.body;
 
         await teacherModel.updateOne({ _id: id }, { 
             firstname: firstname,
@@ -41,7 +41,8 @@ export const updateUser = async(req:Request, res:Response) => {
             dob: dob,
             gender: gender,
             line_contact: line_contact,
-            phone_contact: phone_contact
+            phone_contact: phone_contact,
+            image: image
         });
         
         response(res,200, "success", "Update new user done",null);

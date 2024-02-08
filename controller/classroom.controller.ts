@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 export const createClassroom = async(req:Request, res:Response) => {
     
     try {
-        const { name, owner, subject_code, grade } = req.body;
+        const { name, owner, subject_code, grade, image } = req.body;
 
         // Generate classroom code
         const uuid = uuidv4();
@@ -21,7 +21,8 @@ export const createClassroom = async(req:Request, res:Response) => {
             owner: owner,
             code: classroomCode,
             subject_code: subject_code,
-            grade: grade
+            grade: grade,
+            image: image
         });
 
         response(res,200, "success", "Create Classroom",null);
@@ -51,7 +52,8 @@ export const getAllClassroom = async (req:Request, res:Response) => {
                     code: 1,
                     owner: 1,
                     subject_code: 1,
-                    grade: 1
+                    grade: 1,
+                    image: 1
                 }
             }
         ])
@@ -80,7 +82,8 @@ export const getClassroomById = async (req:Request, res:Response) => {
             code: classroom.code,
             owner: classroom.owner,
             subject_code: classroom.subject_code,
-            grade: classroom.grade
+            grade: classroom.grade,
+            image: classroom.image
         }
         response(res,200, "success", "Find Classroom",classroomObj);
         
@@ -96,12 +99,13 @@ export const updateClassroomById = async (req:Request, res:Response) => {
     try {
         const classroomId = req.params.classroom_id;
     
-        const { name, subject_code, grade } = req.body;
+        const { name, subject_code, grade, image } = req.body;
 
         await classroomModel.updateOne({ _id: classroomId } ,{
             name: name,
             subject_code: subject_code,
-            grade: grade
+            grade: grade,
+            image: image
         });
         response(res,200, "success", "Update New Classroom Done",null);
 

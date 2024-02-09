@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import { connectMongoDB } from './database/mongodb';
 import cors from 'cors';
+import multer from 'multer';
 
 import teacherRoute from './routes/teacher.router'
 import classroomRoute from './routes/classroom.router';
@@ -9,7 +10,6 @@ import authenRoute from './routes/authen.router';
 import studentRoute from './routes/student.router';
 import assignmentRoute from './routes/assignment.router';
 import attendanceRoute from './routes/attendance.router';
-
 
 
 const app = express();

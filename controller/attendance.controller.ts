@@ -101,6 +101,8 @@ export const exportAttendanceExcel = async (req: Request, res: Response) => {
     try {
         const { classroom_id } = req.body;
         const { start_date, end_date } = req.query;
+        console.log(start_date, end_date);
+        console.log(classroom_id);
 
         const attendanceData = await attendanceModel.find(
             { 
@@ -111,6 +113,14 @@ export const exportAttendanceExcel = async (req: Request, res: Response) => {
                 }
             }
         );
+
+        console.log(attendanceData);
+
+        if (attendanceData.length === 0) {
+            return response(res, 404, 'fail', 'Not founded attendance', null);
+        }
+
+        console.log(attendanceData);
 
         const workbook = new excelJS.Workbook();
 

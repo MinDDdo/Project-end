@@ -1,7 +1,9 @@
 import { Response, Request } from "express";
 import { response } from "../common/response";
 import { handleError } from "../helpers/handleError";
-import  studentModel  from "../schemas/student.schema";
+import excelJS from 'exceljs';
+import fs from 'fs';
+import studentModel from "../schemas/student.schema";
 import assignmentModel from "../schemas/assignment.schema";
 import attendanceModel from "../schemas/attendance.schema";
 
@@ -234,6 +236,74 @@ export const randomGroup = async (req: Request, res: Response) => {
         response(res, 200, 'success', 'Group student success', groupResponse);
           
     } catch (error) {
+        handleError(res, error);
+    }
+}
+
+export const uploadStudentList = async (req: Request, res: Response) => {
+    try {
+        const { classroom_id } = req.params;
+
+        if (req.file?.mimetype !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+            fs.unlink(req.file?.path || '', err => {
+                if (err) {
+                    console.error('[DELETE FILE]: Error deleting file:', err);
+                } else {
+                    console.log('[DELETE FILE]: File deleted successfully');
+                }
+            });
+
+            return response(res, 422, 'fail', 'File is not .xlsx format', null);
+        }
+
+        const workbook = new excelJS.Workbook();
+        await workbook.xlsx.readFile(req.file?.path || '');
+        const worksheet = workbook.getWorksheet(1); // Assuming first worksheet
+
+        const arrStudentData: any[] = [];
+
+        worksheet?.eachRow({ includeEmpty: true }, (row, rowNumber) => {
+            if (rowNumber !== 1) {
+                const arr: any[] = [];
+
+                row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+                    arr.push(cell.value);
+                });
+
+                arrStudentData.push(arr);
+            }
+        });
+
+        const studentInsertData = arrStudentData.map(item => {
+            const studentObj = {
+                classroom_id: classroom_id,
+                no: item[0],
+                firstname: item[1],
+                lastname: item[2]
+            };
+            
+            return studentObj;
+        })
+
+        if (studentInsertData.length === 0) {
+            return response(res, 404, 'fail', "Don't have any data for upload", null);
+        }
+
+        console.log(studentInsertData);
+
+        await studentModel.insertMany(studentInsertData);
+
+        fs.unlink(req.file.path, err => {
+            if (err) {
+                console.error('[DELETE FILE]: Error deleting file:', err);
+            } else {
+                console.log('[DELETE FILE]: File deleted successfully');
+            }
+        });
+
+        response(res, 200, 'success', 'Upload student with file done', null);
+    } catch (error) {
+        console.log(error);
         handleError(res, error);
     }
 }

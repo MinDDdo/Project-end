@@ -52,3 +52,31 @@ export const updateUser = async(req:Request, res:Response) => {
         handleError(res, error);
     }
 }
+
+export const getTeacherById = async (req: Request, res: Response) => {
+    try {
+        const { teacher_id } = req.params;
+
+        const teacher = await teacherModel.findById({ _id: teacher_id })
+
+        if (!teacher) {
+            return response(res,404, "fail", "Not found",null);
+        }
+
+        const teacherObj = {
+            firstname: teacher.firstname,
+            lastname: teacher.lastname,
+            dob: teacher.dob,
+            gender: teacher.gender,
+            line_contact: teacher.line_contact,
+            phone_contact: teacher.phone_contact,
+            image: teacher.image
+        }
+
+        response(res,200, "success", "Find teacher",teacherObj)
+    }catch (error) {
+        console.log(error);
+        handleError(res, error);
+    }
+}
+

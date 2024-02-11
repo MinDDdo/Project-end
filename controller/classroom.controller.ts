@@ -25,7 +25,7 @@ export const createClassroom = async(req:Request, res:Response) => {
             image: image
         });
 
-        response(res,200, "success", "Create Classroom",null);
+        response(res,200, "success", "Create Classroom Done",null);
     }catch (error) {
         console.log(error);
 
@@ -58,7 +58,7 @@ export const getAllClassroom = async (req:Request, res:Response) => {
             }
         ])
 
-        response(res,200, "success", "Doo Classrom Ja",classroom);
+        response(res,200, "success", "Find Classrom ",classroom);
     }catch (error) {
         console.log(error)
 

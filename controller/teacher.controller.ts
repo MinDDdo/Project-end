@@ -57,6 +57,8 @@ export const getTeacherById = async (req: Request, res: Response) => {
     try {
         const { teacher_id } = req.params;
 
+        //////////////////////////
+
         const teacher = await teacherModel.findById({ _id: teacher_id })
 
         if (!teacher) {

@@ -2,7 +2,8 @@ import { Router } from "express";
 import validToken from '../middlewares/authenJWT';
 import { createAttendance, updateAttendance, 
         deleteAttendance, getAllAttendance, 
-        getAttendanceById, exportAttendanceExcel } from "../controller/attendance.controller";
+        getAttendanceById, exportAttendanceExcel, 
+        studentCheckStatusAttendance } from "../controller/attendance.controller";
 
 const router = Router();
 
@@ -11,6 +12,7 @@ router.put('/:attendance_id/update-attendance',validToken, updateAttendance);
 router.delete('/:attendance_id/delete-attendance',validToken, deleteAttendance);
 router.get('/:classroom_id/getAll-attendance',validToken, getAllAttendance);
 router.get('/:attendance_id/getById-attendance',validToken, getAttendanceById);
+router.get('/check-attendance',validToken, studentCheckStatusAttendance);
 
 router.get('/export-attendance-excel',validToken, exportAttendanceExcel);
 

@@ -141,9 +141,10 @@ export const getAllStudent = async (req:Request, res:Response) => {
 }
 
 export const getStudentById = async (req:Request, res:Response) => {
-    
     try {
         const { student_id } = req.params;
+
+        console.log(req.body)
 
         const student = await studentModel.findById({ _id:student_id})
 

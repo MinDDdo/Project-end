@@ -18,7 +18,7 @@ app.use(cors({
     origin: '*'
 }));
 
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 
 app.use('/v1/teacher', teacherRoute);
 app.use('/v1/classroom', classroomRoute);

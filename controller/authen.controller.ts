@@ -75,6 +75,9 @@ export const refreshToken = async (req: Request, res: Response) => {
             const teacher_id = (decodeToken as jwt.JwtPayload).id;
             const access_token = createToken({ id: teacher_id }, ACCESS_TOKEN_EXPIRED);
 
+            console.log('refresh token', refresh_token);
+            console.log('access token', access_token);
+
             const data = {
                 access_token: access_token
             }
@@ -89,6 +92,8 @@ export const refreshToken = async (req: Request, res: Response) => {
 
 export const joinClassroom = async (req: Request, res: Response) => {
     try {
+        console.log(req.body);
+        
         const { classroom_code, no } = req.body;
 
         const classroom = await classroomModel.findOne({ code: classroom_code });

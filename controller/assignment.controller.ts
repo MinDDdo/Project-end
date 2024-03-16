@@ -25,7 +25,6 @@ export const createAssignment = async (req: Request, res: Response) => {
             }
             return studentObj
         })
-        console.log(studentMap)
 
         await assignmentModel.create({
             classroom_id: classroom_id,
@@ -169,7 +168,9 @@ export const studentCheckStatusAssignment = async (req:Request, res:Response) =>
                 classroom_id: 1,
                 assign_name: 1,
                 assign_detail: 1,
-                handin_detail: "$student"
+                handin_detail: "$student",
+                assign_create: 1,
+                assign_due: 1
               }
             }
           ])
@@ -181,4 +182,3 @@ export const studentCheckStatusAssignment = async (req:Request, res:Response) =>
         handleError(res,error);
     }
 }
-

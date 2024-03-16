@@ -4,6 +4,7 @@ import { handleError } from "../helpers/handleError";
 import attendanceModel from "../schemas/attendance.schema";
 import excelJS from 'exceljs';
 import dayjs from 'dayjs';
+import { log } from "console";
 
 export const createAttendance = async (req:Request, res:Response) => {
     try {
@@ -101,8 +102,6 @@ export const exportAttendanceExcel = async (req: Request, res: Response) => {
     try {
         const { classroom_id } = req.body;
         const { start_date, end_date } = req.query;
-        console.log(start_date, end_date);
-        console.log(classroom_id);
 
         const attendanceData = await attendanceModel.find(
             { 
@@ -114,13 +113,9 @@ export const exportAttendanceExcel = async (req: Request, res: Response) => {
             }
         );
 
-        console.log(attendanceData);
-
         if (attendanceData.length === 0) {
             return response(res, 404, 'fail', 'Not founded attendance', null);
         }
-
-        console.log(attendanceData);
 
         const workbook = new excelJS.Workbook();
 
@@ -167,5 +162,65 @@ export const exportAttendanceExcel = async (req: Request, res: Response) => {
         res.end(buffer);
     } catch (error) {
         handleError(res, error);
+    }
+}
+
+export const studentCheckStatusAttendance = async (req: Request, res: Response) => {
+    try {
+        const { no , classroom_id } = req.body;
+        
+        const attendance: {
+            attendance_detail: {
+              no: number;
+              firstname: string;
+              lastname: string;
+              status: string;
+            }
+        }[] = await attendanceModel.aggregate([
+            { $unwind: "$student" },
+
+            {
+                $match: { classroom_id: classroom_id, "student.no": no },
+            },
+
+            {
+              $project: {
+                _id: 0,
+                attendance_id: "$_id",
+                attendance_detail: "$student",
+              }
+            }
+        ]);
+
+        const attendanceSummary = {
+            present: 0,
+            absent: 0,
+            leave: 0,
+            late: 0
+        }
+
+        attendance.forEach(item => {
+            if (item.attendance_detail.status === "present") {
+                attendanceSummary.present += 1
+            }
+
+            if (item.attendance_detail.status === "absent") {
+                attendanceSummary.absent += 1
+            }
+
+            if (item.attendance_detail.status === "leave") {
+                attendanceSummary.leave += 1
+            }
+
+            if (item.attendance_detail.status === "late") {
+                attendanceSummary.late += 1
+            }
+        })
+
+        response(res,200, "success", "Check done", attendanceSummary);
+
+    }catch (error) {
+        console.log(error);
+        handleError(res,error);
     }
 }

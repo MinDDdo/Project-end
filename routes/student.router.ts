@@ -10,10 +10,14 @@ import {
     randomGroup,
     uploadStudentList
 } from "../controller/student.controller";
+import bodyParser from "body-parser";
 
 const router = Router();
 
 const upload = multer({ dest: 'uploads/' });
+
+const jsonParser = bodyParser.json()
+const urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 router.post('/:classroom_id/create-student', validToken, createStudent);
 router.put('/update-student/:student_id', validToken,updateStudent);

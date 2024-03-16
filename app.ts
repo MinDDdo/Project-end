@@ -15,17 +15,18 @@ import attendanceRoute from './routes/attendance.router';
 const app = express();
 
 app.use(cors({
-    origin: '*'
+    origin: '*',
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 }));
 
 app.use(bodyParser.json());
 
+app.use('/v1/attendance', attendanceRoute);
 app.use('/v1/teacher', teacherRoute);
 app.use('/v1/classroom', classroomRoute);
 app.use('/v1/auth', authenRoute);
 app.use('/v1/student', studentRoute);
 app.use('/v1/assignment', assignmentRoute);
-app.use('/v1/attendance', attendanceRoute);
 
 
 connectMongoDB().then();

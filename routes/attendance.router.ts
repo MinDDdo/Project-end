@@ -14,6 +14,6 @@ router.get('/:classroom_id/getAll-attendance',validToken, getAllAttendance);
 router.get('/:attendance_id/getById-attendance',validToken, getAttendanceById);
 router.post('/check-attendance',validToken, studentCheckStatusAttendance);
 
-router.get('/export-attendance-excel',validToken, exportAttendanceExcel);
+router.post('/export-attendance-excel',validToken, exportAttendanceExcel);
 
 export default router;

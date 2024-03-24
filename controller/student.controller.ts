@@ -12,7 +12,7 @@ export const createStudent = async (req: Request, res: Response) => {
     try {
         const { classroom_id } = req.params;
         
-        const { firstname, lastname, no } = req.body;
+        const { firstname, lastname, no, image } = req.body;
 
         const studentAll = await studentModel.find({ classroom_id: classroom_id})
 
@@ -30,7 +30,8 @@ export const createStudent = async (req: Request, res: Response) => {
             classroom_id: classroom_id,
             no: no,
             firstname: firstname,
-            lastname: lastname
+            lastname: lastname,
+            image: image
         });
 
         const newStudent = {
@@ -275,15 +276,52 @@ export const uploadStudentList = async (req: Request, res: Response) => {
             }
         });
 
-        const studentInsertData = arrStudentData.map(item => {
+        const studentInsertData = arrStudentData.map((item) => {
             const studentObj = {
                 classroom_id: classroom_id,
                 no: item[0],
                 firstname: item[1],
-                lastname: item[2]
+                lastname: item[2],
+                image: "S_1"
             };
             
             return studentObj;
+        })
+
+        arrStudentData.forEach(async(item) => {
+            const studentObj = {
+                classroom_id: classroom_id,
+                no: item[0],
+                firstname: item[1],
+                lastname: item[2],
+                image: "S_1"
+            };
+
+            const newStudent = {
+                no: item[0],
+                firstname: item[1],
+                lastname: item[2],
+                handin: false
+            }
+
+            await assignmentModel.updateMany({ classroom_id: classroom_id }, {
+                $push: {
+                    student: newStudent
+                }
+            });
+    
+            const newAttendance = {
+                no: item[0],
+                firstname: item[1],
+                lastname: item[2],
+                present: false
+            }
+
+            await attendanceModel.updateMany({ classroom_id: classroom_id }, {
+                $push: {
+                    student: newAttendance
+                }
+            });
         })
 
         if (studentInsertData.length === 0) {

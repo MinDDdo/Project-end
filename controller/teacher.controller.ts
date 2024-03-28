@@ -18,7 +18,8 @@ export const createUser = async(req:Request, res:Response) => {
             dob: dob,
             gender: gender,
             email: email,
-            password: encryptPassword 
+            password: encryptPassword,
+            image: 'T_1'
         });
 
         response(res,200, "success", "Singup new user done",null);

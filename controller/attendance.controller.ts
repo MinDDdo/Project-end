@@ -27,10 +27,11 @@ export const updateAttendance = async (req:Request, res:Response) => {
     try {
         const { attendance_id } = req.params;
 
-        const { student } = req.body;
+        const { student, attendance_date } = req.body;
 
         await attendanceModel.updateOne({ _id: attendance_id},{ 
-            student: student
+            student: student,
+            attendance_date: attendance_date
         })
         response(res,200, "success", "Update attendance done",null);
 

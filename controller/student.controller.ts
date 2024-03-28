@@ -6,6 +6,7 @@ import fs from 'fs';
 import studentModel from "../schemas/student.schema";
 import assignmentModel from "../schemas/assignment.schema";
 import attendanceModel from "../schemas/attendance.schema";
+import studentGroupModel from "../schemas/studentgroup.schema";
 
 
 export const createStudent = async (req: Request, res: Response) => {
@@ -202,10 +203,10 @@ export const deleteStudentById = async (req:Request, res:Response) => {
     }
 }
 
-export const randomGroup = async (req: Request, res: Response) => {
+export const createGroup = async (req: Request, res: Response) => {
     try {
         const { classroom_id } = req.params;
-        const { group_size } = req.body;
+        const { group_size, group_name } = req.body;
 
         const students = await studentModel.find({ classroom_id: classroom_id });
 
@@ -235,8 +236,80 @@ export const randomGroup = async (req: Request, res: Response) => {
             groupResponse.push(group);
         }
 
+        console.log(groupResponse)
+
+        await studentGroupModel.create({
+            classroom_id: classroom_id,
+            group_name: group_name,
+            group_size: group_size,
+            data: groupResponse
+        })
+
         response(res, 200, 'success', 'Group student success', groupResponse);
-          
+    } catch (error) {
+        handleError(res, error);
+    }
+}
+
+export const getAllGroup = async (req: Request, res: Response) => {
+    try {
+        const { classroom_id } = req.params;
+
+        const groups = await studentGroupModel.find({ classroom_id: classroom_id });
+
+        if (groups.length === 0) {
+            return response(res, 200, 'success', 'Get student group success', []);
+        }
+        
+        const groupMap = groups.map((item) => {
+            const groupObj = {
+                id: item._id,
+                classroom_id: item.classroom_id,
+                group_name: item.group_name,
+                group_size: item.group_size,
+                data: item.data
+            }
+
+            return groupObj;
+        })
+
+        response(res, 200, 'success', 'Get student group success', groupMap);
+    } catch (error) {
+        handleError(res, error);
+    }
+}
+
+export const getGroupById = async (req: Request, res: Response) => {
+    try {
+        const { classroom_id, group_id } = req.params;
+
+        const group = await studentGroupModel.findOne({ classroom_id: classroom_id, _id: group_id });
+
+        if (!group) {
+            return response(res, 404, 'faild', 'Not found group', null);
+        }
+        
+        const groupObj = {
+            id: group._id,
+            classroom_id: group.classroom_id,
+            group_name: group.group_name,
+            group_size: group.group_size,
+            data: group.data
+        }
+
+        response(res, 200, 'success', 'Get student group success', groupObj);
+    } catch (error) {
+        handleError(res, error);
+    }
+}
+
+export const deleteGroupById = async (req: Request, res: Response) => {
+    try {
+        const { group_id } = req.params;
+
+        await studentGroupModel.deleteOne({ _id: group_id });
+
+        response(res, 200, 'success', 'Delete student group success', null);
     } catch (error) {
         handleError(res, error);
     }

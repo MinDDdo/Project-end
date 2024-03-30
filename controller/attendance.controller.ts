@@ -114,6 +114,8 @@ export const exportAttendanceExcel = async (req: Request, res: Response) => {
             }
         );
 
+        console.log(attendanceData)
+
         if (attendanceData.length === 0) {
             return response(res, 404, 'fail', 'Not founded attendance', null);
         }

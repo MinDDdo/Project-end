@@ -2,7 +2,8 @@ import { Router } from "express";
 import validToken from '../middlewares/authenJWT';
 import { createAssignment, getAllAssignment, getAssignmentById, 
         updateAssignmentById, deleteAssignmentById, 
-        checkAssignment, studentCheckStatusAssignment,  } from "../controller/assignment.controller"
+        checkAssignment, studentCheckStatusAssignment,
+        rateScore,  } from "../controller/assignment.controller"
 
 const router = Router();
 
@@ -13,6 +14,7 @@ router.put('/update-assignment/:assignment_id',validToken, updateAssignmentById)
 router.delete('/delete-assignment/:assignment_id',validToken, deleteAssignmentById);
 router.post('/check-assignment/:assignment_id',validToken, checkAssignment);
 router.post('/check-handin',validToken, studentCheckStatusAssignment);
+router.post('/rate-score/:assignment_id',validToken, rateScore);
 
 
 export default router;

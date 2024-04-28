@@ -12,17 +12,30 @@ export const createAssignment = async (req: Request, res: Response) => {
     try {
         const { classroom_id } = req.params;
 
-        const { assign_name, assign_detail, assign_due } = req.body;
+        const { assign_name, assign_detail, assign_due, assign_score, max_score } = req.body;
 
         const student = await studentModel.find({ classroom_id: classroom_id });
 
         const studentMap = student.map((item) => {
-            const studentObj = {
-                no: item.no,
-                firstname: item.firstname,
-                lastname: item.lastname,
-                handin: false
+            let studentObj;
+
+            if (assign_score) {
+                studentObj = {
+                    no: item.no,
+                    firstname: item.firstname,
+                    lastname: item.lastname,
+                    score: 0,
+                    handin: false
+                }
+            } else {
+                studentObj = {
+                    no: item.no,
+                    firstname: item.firstname,
+                    lastname: item.lastname,
+                    handin: false
+                }
             }
+            
             return studentObj
         })
 
@@ -32,7 +45,9 @@ export const createAssignment = async (req: Request, res: Response) => {
             assign_due: assign_due,
             assign_name: assign_name,
             assign_detail: assign_detail,
-            student: studentMap
+            student: studentMap,
+            assign_score: assign_score,
+            max_score: max_score
         })
 
         response(res, 200, "success", "Create Assignment done", null);
@@ -58,10 +73,13 @@ export const getAllAssignment = async (req: Request, res: Response) => {
                 assign_due: item.assign_due,
                 assign_name: item.assign_name,
                 assign_detail: item.assign_detail,
-                student: item.student
+                student: item.student,
+                assign_score: item.assign_score,
+                max_score: item.max_score
             }
+
             return assigmentObj;
-        })
+        });
 
         response(res, 200, "success", "Find assignment done", assigmentMap);
     } catch (error) {
@@ -84,7 +102,9 @@ export const getAssignmentById = async (req: Request, res: Response) => {
             assign_due: assignment?.assign_due,
             assign_name: assignment?.assign_name,
             assign_detail: assignment?.assign_detail,
-            student: assignment?.student
+            student: assignment?.student,
+            assign_score: assignment?.assign_score,
+            max_score: assignment?.max_score
         };
 
         response(res, 200, "success", "Find assignment done", assignmentObj);
@@ -147,7 +167,30 @@ export const checkAssignment = async (req: Request, res: Response) => {
     } catch (error) {
         console.log(error);
         handleError(res, error);
+    }
+}
 
+export const rateScore = async (req: Request, res: Response) => {
+    try {
+        const { assignment_id } = req.params;
+
+        const { no, score } = req.body;
+
+        await assignmentModel.updateOne({ _id: assignment_id, 'student.no': no },
+            {
+                $set: {
+                    'student.$[x].score': score
+                }
+            },
+            {
+                arrayFilters: [{ 'x.no': no }]
+            }
+        );
+
+        response(res,200, "success", "Check assignment done", null);
+    } catch (error) {
+        console.log(error);
+        handleError(res, error);
     }
 }
 
@@ -170,7 +213,9 @@ export const studentCheckStatusAssignment = async (req:Request, res:Response) =>
                 assign_detail: 1,
                 handin_detail: "$student",
                 assign_create: 1,
-                assign_due: 1
+                assign_due: 1,
+                assign_score: 1,
+                max_score: 1
               }
             }
           ])

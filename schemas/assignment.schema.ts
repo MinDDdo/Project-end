@@ -7,6 +7,8 @@ interface Assignment {
     assign_due: Date;
     assign_name: string;
     assign_detail: string;
+    assign_score: boolean;
+    max_score: number;
 }
 
 interface StudentItem {
@@ -14,6 +16,7 @@ interface StudentItem {
     firstname: string;
     lastname: string;
     handin: boolean;
+    score: number;
 }
 
 const studentItemSchema = new Schema<StudentItem>({
@@ -33,6 +36,9 @@ const studentItemSchema = new Schema<StudentItem>({
     handin: {
         type: Boolean,
         required: true,
+    },
+    score: {
+        type: Number,
     }
 }, { _id: false })
 
@@ -61,6 +67,12 @@ const assignmentSchema = new Schema<Assignment>({
         type: [studentItemSchema],
         default: undefined
     },
+    assign_score: {
+        type: Boolean,
+    },
+    max_score: {
+        type: Number
+    }
 })
 
 const assignmentModel = model('assigment', assignmentSchema);
